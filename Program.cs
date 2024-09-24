@@ -5,7 +5,7 @@ using System.Text.Json;
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main()
     {
         try
         {
@@ -95,12 +95,34 @@ class Program
             Console.WriteLine($"{exception.Message}\n");
         }
 
+        await Api();
+
+    }
+
+    static readonly HttpClient client = new HttpClient();
+
+    static async Task Api()
+    {
+       try 
+        {
+            using HttpResponseMessage response = await client.GetAsync("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m");
+            response.EnsureSuccessStatusCode();
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseBody);
+            string apiPath = "weather.json";
+            if(!File.Exists(apiPath))
+                {
+                    File.Create(apiPath);
+                } 
+            
+            var json = JsonDocument.Parse(responseBody);
+            var newJson = JsonSerializer.Serialize(json, new JsonSerializerOptions {WriteIndented = true});
+            File.WriteAllText(apiPath, newJson);
+            Console.WriteLine($"Data already exists within the file weather.json {File.ReadAllText(apiPath)}");
+        }
+        catch(HttpRequestException exception)
+        {
+            Console.WriteLine($"An error occured {exception.Message}");
+        }
     }
 }
-
-/*
-Oppgave 3 (Valgfri, vanskelig)
-Bruk enten C# HTTP klassen, eller CURL (CLI) via Git BASH terminal til å hente ut data fra en RestAPI på nett
-Skriv ut dataen som hentes via C# HTTP eller CURL til terminalen eller til en tekstfil via File klassen
-Nedenfor finner dere en liste over forskjellige APIer som kan brukes til å hente JSON data fra nettet
-*/
