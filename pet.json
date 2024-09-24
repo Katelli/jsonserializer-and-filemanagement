@@ -1,0 +1,14 @@
+[
+  {
+    "Owner": "Katrine",
+    "PetName": "Nyx",
+    "Animal": "cat",
+    "PetAge": 9
+  },
+  {
+    "Owner": "Grete",
+    "PetName": "Star",
+    "Animal": "cat",
+    "PetAge": 19
+  }
+]
